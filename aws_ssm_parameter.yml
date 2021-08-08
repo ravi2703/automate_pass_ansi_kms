@@ -1,0 +1,25 @@
+- name: Create RDS instance with aws_secret lookup for password param
+  rds:
+    command: create
+    instance_name: app-db
+    db_engine: MySQL
+    size: 10
+    instance_type: db.m1.small
+    username: dbadmin
+    password: "{{ lookup('aws_secret', 'DbSecret') }}"
+    tags:
+      Environment: staging
+
+- name: lookup ssm parameter store in the current region
+  debug: msg="{{ lookup('aws_ssm', 'Hello' ) }}"
+
+- name: lookup ssm parameter store in nominated region
+  debug: msg="{{ lookup('aws_ssm', 'Hello', region='us-east-2' ) }}"
+
+- name: lookup ssm parameter store without decrypted
+  debug: msg="{{ lookup('aws_ssm', 'Hello', decrypt=False ) }}"
+
+- name: lookup ssm parameter store in nominated aws profile
+  debug: msg="{{ lookup('aws_ssm', 'Hello', aws_profile='myprofile' ) }}"
+
+
